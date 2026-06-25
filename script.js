@@ -301,7 +301,7 @@ function initCarousel() {
 
   function cpv() {
     const w = window.innerWidth;
-    if (w <= 480) return 2;
+    if (w <= 480) return 1;
     if (w <= 768) return 2;
     if (w <= 1024) return 3;
     return 4;
