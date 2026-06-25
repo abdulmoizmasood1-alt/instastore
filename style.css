@@ -649,7 +649,12 @@ a.contact-val:hover { color: var(--gold); }
   .hero { grid-template-columns: 1fr; padding-top: 100px; text-align: center; }
   .hero-actions, .hero-badges { justify-content: center; }
   .hero-sub { margin: 0 auto 32px; }
-  .hero-store-img { max-width: 360px; margin: 0 auto; }
+  .hero-store-img {
+    max-width: 100%;
+    width: 100%;
+    aspect-ratio: 16/9;
+    margin: 0 auto;
+  }
   .about-grid { grid-template-columns: 1fr; gap: 40px; }
   .about-img-wrap { max-width: 400px; margin: 0 auto; }
   .offers-inner { grid-template-columns: 1fr; gap: 36px; }
