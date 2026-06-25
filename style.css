@@ -663,7 +663,7 @@ a.contact-val:hover { color: var(--gold); }
 }
 @media (max-width: 480px) {
   .section { padding: 64px 20px; }
-  .product-card { flex: 0 0 calc(47% - 10px); }
+  .product-card { flex: 0 0 calc(85% - 10px); }
   .product-img  { height: 140px; }
   .about-stats  { grid-template-columns: 1fr 1fr; gap: 16px; }
   .offers-icons { grid-template-columns: 1fr; }
