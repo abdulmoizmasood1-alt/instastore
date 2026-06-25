@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>InstaStore</title>
+<style>
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+  font-family: Arial, sans-serif;
+  background-color: #1a1a1a;
+  overflow: hidden;
+}
+
+#intro {
+  position: fixed;
+  top: 0; left: 0;
+  width: 100%; height: 100vh;
+  background: #1a1a1a;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  z-index: 9999;
+}
+
+/* Glow pulse */
+.pin-glow {
+  position: absolute;
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(244,178,35,0.4) 0%, transparent 70%);
+  opacity: 0;
+  pointer-events: none;
+  transform: translate(-50%, -50%);
+}
+
+/* Logo row — everything on same baseline */
+.logo-row {
+  display: flex;
+  align-items: flex-end; /* baseline alignment */
+  line-height: 1;
+  gap: 0;
+}
+
+/* The "i" column — pin SVG stacked above stem */
+.i-col {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-right: -4px; /* tighter gap to nstaStore */
+  justify-content: flex-end;
+}
+
+/* Pin SVG — larger relative to stem now */
+.pin-svg {
+  width: 38px;   /* wider pin = proud crown above slender stem */
+  height: auto;
+  display: block;
+  opacity: 0;
+  margin-bottom: 6px; /* slight breathe room between pin tip and stem */
+  flex-shrink: 0;
+}
+
+/* Stem — narrower, elegant, softly rounded */
+.i-stem {
+  width: 12px;      /* reduced from 18px — matches font stroke weight */
+  height: 56px;
+  background: #f4b223;
+  border-radius: 3px; /* soft corners, not a digital brick */
+  opacity: 0;
+  flex-shrink: 0;
+}
+
+/* Text */
+.text-nsta {
+  font-size: 78px;
+  font-weight: 700;
+  color: #f4b223;
+  line-height: 0.78;
+  letter-spacing: -1px;
+  opacity: 0;
+}
+
+.text-store {
+  font-size: 78px;
+  font-weight: 400;
+  color: #ffffff;
+  line-height: 0.78;
+  letter-spacing: -1px;
+  opacity: 0;
+}
+
+.tagline {
+  color: #a0a0a0;
+  margin-top: 32px;
+  font-size: 18px;
+  letter-spacing: 2px;
+  opacity: 0;
+}
+
+#website { display: none; opacity: 0; min-height: 100vh; }
+
+</style>
+</head>
+<body>
+
+<div id="intro">
+
+  <div class="pin-glow" id="pinGlow"></div>
+
+  <div class="logo-row">
+
+    <!-- Custom i: SVG pin with transparent hole + stem -->
+    <div class="i-col">
+      <svg class="pin-svg" id="animPin" viewBox="0 0 56 60" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <!-- evenodd cuts a real transparent hole — no white, no colour, just see-through -->
+        <path fill-rule="evenodd" clip-rule="evenodd"
+          d="M28 2C17.507 2 9 10.507 9 21C9 30 16 41 22 49C24.2 52 26.2 54.5 28 56.5C29.8 54.5 31.8 52 34 49C40 41 47 30 47 21C47 10.507 38.493 2 28 2Z M28 10C22.477 10 18 14.477 18 20C18 25.523 22.477 30 28 30C33.523 30 38 25.523 38 20C38 14.477 33.523 10 28 10Z"
+          fill="#f4b223"/>
+      </svg>
+      <div class="i-stem" id="animStem"></div>
+    </div>
+
+    <div class="text-nsta" id="animNsta">nsta</div>
+    <div class="text-store" id="animStore">Store</div>
+
+  </div>
+
+  <div class="tagline" id="tagline">Everything you need, instantly.</div>
+
+</div>
+
+<div id="website"></div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+<script>
+
+// ── SET INITIAL STATES FIRST ──
+gsap.set('#animPin',   { y: -70, scale: 0.5, opacity: 0 });
+gsap.set('#animStem',  { scaleY: 0, opacity: 0, transformOrigin: 'bottom center' });
+gsap.set('#animNsta',  { x: -40, opacity: 0 });
+gsap.set('#animStore', { x: -40, opacity: 0 });
+gsap.set('#tagline',   { y: 12, opacity: 0 });
+
+// Position glow behind pin landing spot
+const glow = document.getElementById('pinGlow');
+const col  = document.querySelector('.i-col');
+const rect = col.getBoundingClientRect();
+glow.style.left = (rect.left + rect.width / 2) + 'px';
+glow.style.top  = (rect.top + 46) + 'px';
+
+// ── TIMELINE ──
+const tl = gsap.timeline({ defaults: { ease: 'power3.out' } });
+
+tl
+  // 1. Pin drops with elastic bounce
+  .to('#animPin', {
+    y: 0, scale: 1, opacity: 1,
+    duration: 0.65,
+    ease: 'elastic.out(1, 0.55)'
+  }, 0.2)
+
+  // 2. Glow ripples on landing
+  .to('#pinGlow', { opacity: 1, scale: 2.4, duration: 0.28, ease: 'power2.out' }, 0.55)
+  .to('#pinGlow', { opacity: 0, scale: 3.8, duration: 0.5,  ease: 'power2.in'  }, 0.83)
+
+  // 3. Stem grows up
+  .to('#animStem', {
+    scaleY: 1, opacity: 1,
+    duration: 0.4, ease: 'power2.out'
+  }, 0.7)
+
+  // 4. "nsta" slides in
+  .to('#animNsta', {
+    x: 0, opacity: 1,
+    duration: 0.55, ease: 'power3.out'
+  }, 0.82)
+
+  // 5. "Store" follows
+  .to('#animStore', {
+    x: 0, opacity: 1,
+    duration: 0.5, ease: 'power3.out'
+  }, 1.0)
+
+  // 6. Tagline fades up
+  .to('#tagline', {
+    opacity: 1, y: 0,
+    duration: 0.6, ease: 'power2.out'
+  }, 1.35)
+
+  // 7. Hold
+  .to({}, { duration: 1.0 }, 1.95)
+
+  // 8. Exit
+  .to('#intro', {
+    opacity: 0, scale: 1.04,
+    duration: 0.65, ease: 'power2.inOut',
+    onComplete: () => {
+      document.getElementById('intro').style.display = 'none';
+      window.location.href = 'website.html';
+    }
+  });
+
+</script>
+</body>
+</html>
